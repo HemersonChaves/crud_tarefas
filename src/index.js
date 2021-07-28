@@ -10,13 +10,19 @@ app.use(express.json());
 const users = [];
 
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+  const {username} = request.headers;
+  const user = users.find(user => user.username === username)
+  console.log(user);
+  if(!user){
+    return response.status(400).json({ error: "Conta não encontrada" });
+  }
+  request.user = user;
+  return next();
 }
 
 app.post('/users', (request, response) => {
-
   const {name, username} = request.body;
-  ususario_existente = users.some(user => user.name === name || user.username === username);
+  ususario_existente = users.some(user => user.username === username);
   if(ususario_existente){
     return response.status(400).json({ error: "Conta existente" });
   }
@@ -31,8 +37,9 @@ app.post('/users', (request, response) => {
 
 });
 
-app.get('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+app.get('/todos', checksExistsUserAccount, (request, response) => {  
+  const {user} = request;
+  return response.json(user.todos);
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
