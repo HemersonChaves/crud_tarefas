@@ -14,8 +14,12 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 app.post('/users', (request, response) => {
-  // Complete aqui
+
   const {name, username} = request.body;
+  ususario_existente = users.some(user => user.name === name || user.username === username);
+  if(ususario_existente){
+    return response.status(400).json({ error: "Conta existente" });
+  }
   const id_ = uuidv4();
   users.push({ 
     id: id_,
